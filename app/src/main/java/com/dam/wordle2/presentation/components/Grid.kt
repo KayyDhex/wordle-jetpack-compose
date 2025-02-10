@@ -19,15 +19,12 @@ fun WordleGrid(solution: String, guesses: List<String>, currentAttempt: String) 
         repeat(6) { rowIndex ->
             when {
                 rowIndex < guesses.size -> {
-                    // Show previous attempts with comparison
-                    WordRowCompare(solution, guesses[rowIndex])
+                    WordRowCompare(guesses[rowIndex],solution)
                 }
                 rowIndex == guesses.size -> {
-                    // Show the current input as it's being typed
                     WordRow(currentAttempt.padEnd(5, ' '), -1)
                 }
                 else -> {
-                    // Empty rows for future attempts
                     WordRow("     ", -1)
                 }
             }

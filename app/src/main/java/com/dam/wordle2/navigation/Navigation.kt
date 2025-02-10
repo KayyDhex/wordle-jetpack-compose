@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 fun Navigation(){
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = HomeScreenDes) {
+    NavHost(navController = navController, startDestination = GameScreenDes) {
         composable<HomeScreenDes>{
             HomeScreen()
         }

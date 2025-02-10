@@ -63,7 +63,7 @@ fun KeyboardKey(label: String, onClick: () -> Unit, blockType: BlockType) {
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor
         ),
-        modifier = Modifier.width(30.dp),
+        modifier = Modifier.width(25.dp),
         contentPadding = PaddingValues(0.dp) // Remove default padding
 
     ) {

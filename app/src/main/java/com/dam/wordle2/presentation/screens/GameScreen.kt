@@ -5,10 +5,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,13 +29,29 @@ import com.dam.wordle2.presentation.components.Keyboard
 import com.dam.wordle2.presentation.components.WordleGrid
 import com.dam.wordle2.ui.theme.Wordle2Theme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen() {
 
     var currentAttempt by remember { mutableStateOf("") }
     var attempts by remember { mutableStateOf(mutableListOf<String>()) }
 
-    Scaffold {
+    Scaffold (
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Back")
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ){
         paddingValues ->
         Column (modifier = Modifier.padding(paddingValues).padding(horizontal = 16.dp, vertical = 25.dp)) {
             GridGame(currentAttempt,attempts )
@@ -47,7 +69,10 @@ fun GameScreen() {
                 },
             )
             Spacer(modifier = Modifier.height(16.dp))
-            SubmitButton(attempts, currentAttempt)
+            SubmitButton(onSubmit = {
+                attempts.add(currentAttempt)
+                currentAttempt = ""
+            })
         }
     }
 }
@@ -74,10 +99,10 @@ fun GridGame(currentAttempt: String, attempts: MutableList<String>) {
 }
 
 @Composable
-fun SubmitButton(attempts: MutableList<String>, currentAttempt: String) {
+fun SubmitButton(onSubmit: () -> Unit) {
     Button(
         onClick = {
-            attempts.add(currentAttempt)
+            onSubmit()
         },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
