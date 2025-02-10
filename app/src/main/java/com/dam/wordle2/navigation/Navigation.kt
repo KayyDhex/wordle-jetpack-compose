@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.dam.wordle2.presentation.screens.GameScreen
+import com.dam.wordle2.presentation.screens.game.GameScreen
 import com.dam.wordle2.presentation.screens.HomeScreen
 import com.dam.wordle2.presentation.screens.ScoreScreen
 import kotlinx.serialization.Serializable
@@ -13,15 +13,30 @@ import kotlinx.serialization.Serializable
 fun Navigation(){
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = GameScreenDes) {
+    NavHost(navController = navController, startDestination = HomeScreenDes) {
         composable<HomeScreenDes>{
-            HomeScreen()
+            HomeScreen(
+                onGoPlay = {
+                    navController.navigate(GameScreenDes)
+                },
+                onGoScore = {
+                    navController.navigate(ScoreScreenDes)
+                }
+            )
         }
         composable<GameScreenDes> {
-            GameScreen()
+            GameScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable<ScoreScreenDes> {
-            ScoreScreen()
+            ScoreScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

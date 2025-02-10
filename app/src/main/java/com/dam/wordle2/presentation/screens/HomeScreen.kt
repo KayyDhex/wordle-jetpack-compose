@@ -7,23 +7,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dam.wordle2.R
+import com.dam.wordle2.navigation.GameScreenDes
+import com.dam.wordle2.navigation.ScoreScreenDes
 import com.dam.wordle2.presentation.components.WordRowCompare
 import com.dam.wordle2.ui.theme.Wordle2Theme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onGoPlay: () -> Unit, onGoScore: () -> Unit) {
     Scaffold {
         paddingValues ->
         Column (modifier = Modifier.padding(paddingValues).padding(horizontal = 16.dp, vertical = 25.dp)) {
@@ -31,7 +32,7 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.weight(1f))
             Information()
             Spacer(modifier = Modifier.weight(1f))
-            Buttons()
+            Buttons(onGoPlay,onGoScore)
         }
     }
 }
@@ -43,13 +44,22 @@ fun HomeScreen() {
 )
 fun HomeScreenPreview() {
     Wordle2Theme {
-        HomeScreen()
+        HomeScreen({
+
+        }) {
+
+        }
     }
 }
 
 @Composable
 fun LogoHeader() {
-    Image(painter = painterResource(id = R.drawable.wordle_emblem), contentDescription = "Wordle Emblem")
+    Image(
+        painter = painterResource(id = R.drawable.logowordle),
+        contentDescription = "Wordle Emblem",
+        modifier = Modifier.fillMaxWidth(),
+        contentScale = ContentScale.FillWidth
+    )
 }
 
 @Composable
@@ -73,13 +83,13 @@ fun Information() {
 }
 
 @Composable
-fun Buttons() {
+fun Buttons(onGoPlay: () -> Unit, onGoScore: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         Button(
             onClick = {
-
+                onGoPlay()
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -91,7 +101,7 @@ fun Buttons() {
         }
         Button(
             onClick = {
-
+                onGoScore()
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(

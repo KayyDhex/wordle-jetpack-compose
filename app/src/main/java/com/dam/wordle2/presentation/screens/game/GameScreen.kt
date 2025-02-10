@@ -1,5 +1,6 @@
-package com.dam.wordle2.presentation.screens
+package com.dam.wordle2.presentation.screens.game
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,13 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dam.wordle2.presentation.components.Keyboard
 import com.dam.wordle2.presentation.components.WordleGrid
 import com.dam.wordle2.ui.theme.Wordle2Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameScreen() {
+fun GameScreen(onBack: () -> Unit, gameViewModel: GameViewModel = viewModel()) {
 
     var currentAttempt by remember { mutableStateOf("") }
     var attempts by remember { mutableStateOf(mutableListOf<String>()) }
@@ -44,7 +46,7 @@ fun GameScreen() {
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-
+                        onBack()
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
@@ -54,25 +56,16 @@ fun GameScreen() {
     ){
         paddingValues ->
         Column (modifier = Modifier.padding(paddingValues).padding(horizontal = 16.dp, vertical = 25.dp)) {
-            GridGame(currentAttempt,attempts )
+            GridGame(gameViewModel::currentAttempt.get(),
+                gameViewModel::attempts.get(),
+                gameViewModel::solution.get() )
             Spacer(modifier = Modifier.weight(1f))
             Keyboard(
-                onKeyPressed = { key ->
-                    if (currentAttempt.length < 5) {
-                        currentAttempt += key
-                    }
-                },
-                onBackspace = {
-                    if (currentAttempt.isNotEmpty()) {
-                        currentAttempt = currentAttempt.dropLast(1)
-                    }
-                },
+                onKeyPressed = gameViewModel::onKeyPressed,
+                onBackspace = gameViewModel::onBackspace,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            SubmitButton(onSubmit = {
-                attempts.add(currentAttempt)
-                currentAttempt = ""
-            })
+            SubmitButton(onSubmit = gameViewModel::onSubmit)
         }
     }
 }
@@ -84,17 +77,18 @@ fun GameScreen() {
 )
 fun GameScreenPreview() {
     Wordle2Theme {
-        GameScreen()
+        GameScreen (onBack = {})
     }
 }
 
 @Composable
-fun GridGame(currentAttempt: String, attempts: MutableList<String>) {
+fun GridGame(currentAttempt: String, attempts: List<String>, targetWord: String = "WORDY") {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        WordleGrid(solution = "WORDY", guesses = attempts, currentAttempt)
+        Log.println(Log.INFO, "GameScreen", "currentAttempt: $currentAttempt and solution: $targetWord")
+        WordleGrid(solution = targetWord, guesses = attempts, currentAttempt)
     }
 }
 
