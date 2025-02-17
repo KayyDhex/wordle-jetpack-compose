@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dam.wordle2.presentation.screens.game.GameScreen
 import com.dam.wordle2.presentation.screens.HomeScreen
-import com.dam.wordle2.presentation.screens.ScoreScreen
+import com.dam.wordle2.presentation.screens.score.ScoreScreen
 import kotlinx.serialization.Serializable
 
 @Composable

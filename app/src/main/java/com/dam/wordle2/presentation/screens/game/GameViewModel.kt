@@ -4,9 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.dam.wordle2.data.allWords
+import com.dam.wordle2.data.FakeDataSource
+import com.dam.wordle2.domain.Score
 
 class GameViewModel : ViewModel() {
+    private val localDataSource = FakeDataSource
+
     var solution by mutableStateOf(getRandomWord())
         private set
 
@@ -16,8 +19,14 @@ class GameViewModel : ViewModel() {
     var attempts by mutableStateOf(listOf<String>())
         private set
 
+    var showModal by mutableStateOf(false)
+        private set
+
+    var messageDialog by mutableStateOf("")
+        private set
+
     private fun getRandomWord(): String {
-        return allWords.random()
+        return localDataSource.getRandomWord()
     }
     fun restartGame() {
         solution = getRandomWord()
@@ -40,7 +49,19 @@ class GameViewModel : ViewModel() {
     fun onSubmit() {
         if (currentAttempt.length == 5) {
             attempts = attempts + currentAttempt
+            if(currentAttempt == solution){
+                showModal = true
+                messageDialog = "You win!"
+                localDataSource.addScore(Score(solution, attempts.size, "Hans"))
+            }else if(attempts.size >= 6){
+                showModal = true
+                messageDialog = "You lose!"
+            }
             currentAttempt = ""
         }
+    }
+
+    fun onCloseDialog(){
+        showModal = false
     }
 }

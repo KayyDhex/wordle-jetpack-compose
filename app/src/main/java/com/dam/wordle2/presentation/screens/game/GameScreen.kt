@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,12 +16,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,9 +32,6 @@ import com.dam.wordle2.ui.theme.Wordle2Theme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(onBack: () -> Unit, gameViewModel: GameViewModel = viewModel()) {
-
-    var currentAttempt by remember { mutableStateOf("") }
-    var attempts by remember { mutableStateOf(mutableListOf<String>()) }
 
     Scaffold (
         topBar = {
@@ -66,6 +61,17 @@ fun GameScreen(onBack: () -> Unit, gameViewModel: GameViewModel = viewModel()) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             SubmitButton(onSubmit = gameViewModel::onSubmit)
+            if(gameViewModel::showModal.get()){
+                AlertDialog(
+                    onDismissRequest = gameViewModel::onCloseDialog,
+                    onConfirmation = {
+                        gameViewModel::onCloseDialog.invoke()
+                        gameViewModel::restartGame.invoke()
+                    },
+                    dialogTitle = "Game Over",
+                    dialogText = gameViewModel::messageDialog.get(),
+                )
+            }
         }
     }
 }
@@ -106,4 +112,42 @@ fun SubmitButton(onSubmit: () -> Unit) {
     ) {
         Text("Submit")
     }
+}
+
+@Composable
+fun AlertDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String,
+    dialogText: String,
+) {
+    AlertDialog(
+        title = {
+            Text(text = dialogTitle)
+        },
+        text = {
+            Text(text = dialogText)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text("Restart game")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
 }
